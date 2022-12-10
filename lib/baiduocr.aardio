@@ -1,0 +1,31 @@
+﻿import web.rest.jsonLiteClient;
+ 
+namespace baiduocr;
+ 
+class client{
+    ctor(apiKey,secretKey){
+         
+        this = ..web.rest.jsonLiteClient()
+        this.apiKey = apiKey;
+        this.secretKey = secretKey;
+ 
+        this.oauthApi = this.api("https://aip.baidubce.com/oauth/2.0");
+    };
+
+    auth = function(){ 
+        var result,err = this.oauthApi.token.post({
+            grant_type = "client_credentials";
+            client_id = this.apiKey;
+            client_secret =  this.secretKey;
+        }); 
+        
+        if(!result[["access_token"]]) return null,"认证失败";
+        
+        this.oauthInfo = result;
+        this.extraUrlParameters = {
+            access_token = result.access_token;
+        }
+        return this.oauthInfo;
+    }
+     
+}
