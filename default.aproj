@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="表格o文字识别工具" libEmbed="true" icon="logo.ico" ui="win" output="表格o文字识别工具.exe" CompanyName="秦皇岛开放大学" FileDescription="表格o文字识别工具" LegalCopyright="Copyright (C) 2022 Delfino" ProductName="表格o文字识别工具" InternalName="leci ocr" FileVersion="1.4.0.02" ProductVersion="1.4.0.02" publishDir="/dist/" dstrip="true" local="false" ignored="false">
+<project ver="10" name="表格o文字识别工具" libEmbed="true" icon="logo.ico" ui="win" output="表格o文字识别工具.exe" CompanyName="单位" FileDescription="表格o文字识别工具" LegalCopyright="Copyright (C) 2022 Delfino" ProductName="表格o文字识别工具" InternalName="leci ocr" FileVersion="1.4.0.02" ProductVersion="1.4.0.02" publishDir="/dist/" dstrip="true" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="资源文件" path="res" embed="true" local="false" ignored="false"/>
 	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false" ignored="false">
