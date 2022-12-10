@@ -1,0 +1,53 @@
+import fonts.fontAwesome;
+import win.ui;
+import win.dlg.message;
+/*DSG{{*/
+var winform = win.form(text="关于";right=419;bottom=219;bgcolor=16777215;border="none";exmode="none";max=false;min=false;mode="popup";title=false;topmost=1)
+winform.add(
+btnOk={cls="plus";text="确定";left=359;top=180;right=408;bottom=205;color=10855845;dr=1;font=LOGFONT(h=-16;name='FontAwesome');notify=1;tabstop=1;z=1};
+lnkBaiduApi={cls="plus";text="百度智能云文字识别API
+仅能在联网的情况下使用";left=141;top=161;right=351;bottom=205;align="left";color=8388608;db=1;dl=1;dr=1;font=LOGFONT(h=-14);notify=1;textPadding={left=5};z=3};
+plusAppName={cls="plus";left=35;top=11;right=364;bottom=62;align="left";border={bottom=1;color=-4144960};color=12623104;dl=1;dr=1;editable=1;font=LOGFONT(h=-20);tabstop=1;textPadding={top=6;bottom=1};z=2};
+static={cls="static";text="本程序使用";left=74;top=163;right=152;bottom=184;color=8882055;font=LOGFONT(h=-14);transparent=1;z=5};
+static2={cls="static";text="Version";left=74;top=78;right=134;bottom=100;color=8882055;font=LOGFONT(h=-14);transparent=1;z=7};
+staticCompiled={cls="static";text="Compiled on";left=74;top=124;right=327;bottom=143;color=8882055;font=LOGFONT(h=-14);transparent=1;z=8};
+staticCopyright={cls="static";text="Copyright © 2022 Delfino";left=74;top=100;right=255;bottom=122;color=8882055;font=LOGFONT(h=-14);transparent=1;z=6};
+staticProductVersion={cls="static";text="ProductVersion";left=142;top=78;right=234;bottom=100;color=8882055;font=LOGFONT(h=-14);transparent=1;z=4}
+)
+/*}}*/
+
+import win.ui.simpleWindow;
+var simpleWindow2 = win.ui.simpleWindow(winform);
+
+if(mainForm){
+	var x,y = win.getPos(mainForm.hwnd);
+	win.setPos(winform.hwnd,x+38,y+78);
+	win.setOwner(winform.hwnd,mainForm.hwnd);
+}
+
+var menu = win.ui.getSysMenu(winform, false);
+menu.delete(0xF010/*_SC_MOVE*/, 0x0/*_MF_BYCOMMAND*/);
+
+import style
+winform.lnkBaiduApi.skin(style.link)
+
+import fsys.version;
+import fsys.file
+var _exe = fsys.file(io._exepath)
+var tm=tostring(_exe.getTime().write.addhour(8),"%b %d %Y %H:%M:%S","enu")
+winform.plusAppName.text=fsys.version.getInfo(io._exepath).productName
+winform.staticProductVersion.text=fsys.version.getInfo(io._exepath).productVersion
+winform.staticCompiled.text = "Compiled on "+tm
+
+import process;
+winform.lnkBaiduApi.oncommand = function(id,event){
+	process.openUrl("https://cloud.baidu.com/")	
+}
+
+winform.btnOk.oncommand = function(id,event){
+	winform.close()
+}
+
+winform.show();
+win.loopMessage();
+return winform;
