@@ -7,7 +7,7 @@ import win.dlg.message;
 mainForm = win.form(text="表格o文字识别工具";right=499;bottom=319;bgcolor=16777215;border="none";max=false)
 mainForm.add(
 bk={cls="bk";left=0;top=0;right=500;bottom=32;bgcolor=16777215;forecolor=8882055;linearGradient=0;z=1};
-bk2={cls="bk";text="LECI OCR - 表格o文字识别工具";left=46;top=4;right=256;bottom=26;align="left";color=4934475;z=3};
+bk2={cls="bk";text="表格o文字识别工具";left=46;top=4;right=256;bottom=26;align="left";color=4934475;z=3};
 bk3={cls="bk";text='\uF083';left=16;top=6;right=38;bottom=24;color=4934475;font=LOGFONT(h=-18;name='FontAwesome');z=4};
 btnAbout={cls="plus";text='\uF2DC';left=465;top=36;right=501;bottom=72;border={radius=6};color=2368548;dr=1;font=LOGFONT(h=-19;name='FontAwesome');notify=1;z=8};
 btnClear={cls="plus";text='\uF1F8';left=419;top=36;right=455;bottom=72;border={radius=6};color=2368548;font=LOGFONT(h=-29;name='FontAwesome');notify=1;z=10};
@@ -16,7 +16,7 @@ btnOcrW={cls="plus";text='\uF1C2';left=328;top=36;right=364;bottom=72;border={ra
 btnOcrX={cls="plus";text='\uF1C3';left=282;top=36;right=318;bottom=72;border={radius=6};color=2368548;font=LOGFONT(h=-29;name='FontAwesome');notify=1;z=6};
 btnOpen={cls="plus";text='\uF03E';left=237;top=36;right=273;bottom=72;border={radius=6};color=2368548;font=LOGFONT(h=-29;name='FontAwesome');notify=1;z=11};
 btnPrScrn={cls="plus";text='\uF125';left=191;top=36;right=227;bottom=72;border={radius=6};color=2368548;font=LOGFONT(h=-24;name='FontAwesome');notify=1;z=5};
-chkOnTop={cls="plus";text="置顶窗口";left=9;top=39;right=95;bottom=69;align="left";dl=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=16};z=9};
+chkOnTop={cls="plus";text="置顶窗口";left=9;top=39;right=93;bottom=69;align="left";dl=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=16};z=9};
 chkSave={cls="plus";text="保存XLSX";left=94;top=39;right=178;bottom=69;align="left";dl=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=16};z=12};
 edit={cls="plus";left=8;top=75;right=493;bottom=313;acceptfiles=1;align="left";bgcolor=14803425;border={right=1;color=-4137792};edge=1;editable=1;font=LOGFONT(h=-14;name='宋体');hscroll=1;multiline=1;repeat="scale";vscroll=1;z=2}
 )
@@ -42,6 +42,7 @@ var simpleWindow2 = win.ui.simpleWindow2(mainForm);
 import style
 mainForm.chkOnTop.skin(style.checkBox)
 mainForm.chkSave.skin(style.checkBox)
+
 mainForm.btnPrScrn.skin(style.icon)
 mainForm.btnOpen.skin(style.icon)
 mainForm.btnOcrX.skin(style.icon)
@@ -59,9 +60,7 @@ tooltipCtrl.addTool(mainForm.btnOcrW,"识别文字")
 tooltipCtrl.addTool(mainForm.btnCopy,"复制文本")
 tooltipCtrl.addTool(mainForm.btnClear,"清空内容")
 tooltipCtrl.addTool(mainForm.btnAbout,"关于程序")
-mainForm.btnOcrX.disabled=true
-mainForm.btnOcrW.disabled=true
-			
+
 import fsys.table;
 var pathSetting=io.appData("\lecisoft\表格o文字识别工具\setting.table")
 settings = fsys.table(pathSetting)
@@ -103,32 +102,39 @@ mainForm.btnCopy.oncommand = function(id,event){
 mainForm.btnClear.oncommand = function(id,event){
 	if owner.text='\uF25D' {
 		var txt=mainForm.edit.text;
-		if #txt {
-			var arr=string.splitEx(txt,"\n")
-			var tab={}
-			for(k,v in arr){
-				if #v{
-					var tab1=string.splitEx(string.replace(v,"<@:@>","="),"=")
-					if #tab1[1] tab[string.trim(tab1[1])]=string.replace(tab1[2],`[";\s]`,"")
+		if string.trim(txt) {
+			txt=string.replace(txt,"<@:@>","=")
+			var lines=string.splitEx(string.trim(txt),'\r\n')
+			var ak,sk
+			for(i=1;#lines;1){
+				if string.indexOf(lines[i],"api_key"){
+					ak=string.splitEx(lines[i],"=")[2]:""
+					ak=string.replace(ak,"[\s\p]","")
+				}
+				if string.indexOf(lines[i],"secret_key"){
+					sk=string.splitEx(lines[i],"=")[2]:""
+					sk=string.replace(sk,"[\s\p]","")
 				}
 			}
-			if !tab["api_key"]||!tab["secret_key"]||#tab["api_key"]!=24||#tab["secret_key"]!=32 {
-				console.log("错误：请按要求填写访问令牌信息");
+
+			if ak=="xxxxxxxxxxxxxxxxxxxxxxxx"||sk=="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"||#ak!=24||#sk!=32 {
+				mainForm.msgErr("错误：请按要求填写访问令牌信息",1000);
+				return ;
 			} 
-			settings.api_key=tab["api_key"]
-			settings.secret_key=tab["secret_key"]
+			mainForm.edit.text='访问令牌注册成功！\n你可以开始使用啦！'
+			settings.api_key=ak
+			settings.secret_key=sk
 			mainForm.ak=settings.api_key
 			mainForm.sk=settings.secret_key
 			settings.save()
 			hasKeys=true
 			mainForm.btnClear.text='\uF1F8'
 			tooltipCtrl.addTool(mainForm.btnClear,"清空文本框内容")
+			mainForm.btnOcrX.disabled=false
 		}
 	}else{
-		mainForm.edit.background=0xFFE1E1E1;
+		mainForm.edit.background=null
 		mainForm.edit.text = "";
-		mainForm.btnOcrX.disabled=true
-		mainForm.btnOcrW.disabled=true
 	}
 }
 
@@ -137,8 +143,6 @@ mainForm.btnOpen.oncommand = function(id,event){
 	var path = fsys.dlg.open('图片文件 jpg png bmp jpeg|*.jpg;*.png;*.jpeg;*.bmp||',,,mainForm);
 	if(path){
 		mainForm.edit.text = path;
-		mainForm.btnOcrX.disabled=false
-		mainForm.btnOcrW.disabled=false
 	}
 }
 mainForm.edit.wndproc = {
@@ -168,9 +172,6 @@ mainForm.btnPrScrn.oncommand = function(id,event){
 		mainForm.msgErr("错误：请先截图或复制图像!",1000)
     }else{	
     	mainForm.edit.background=hbmp;
-    	mainForm.edit.text=""
-    	mainForm.btnOcrX.disabled=false
-		mainForm.btnOcrW.disabled=false
     }
 	mainForm.show(true);
 }
@@ -214,7 +215,7 @@ getOcrResult=function(mainForm,api,fi){
     var result = ocr( 
         image = img;
     )
-    mainForm.edit.background=0xFFE1E1E1;
+    mainForm.edit.background=null
     return result
 }
 
@@ -340,7 +341,7 @@ hkId = mainForm.reghotkey(
 );
 hkId = mainForm.reghotkey(
     function(id,mod,vk){
-        mainForm.show(true);
+        win.showForeground(mainForm.hwnd);
     } ,2/*_MOD_CONTROL*/,'J'#
 );
 
